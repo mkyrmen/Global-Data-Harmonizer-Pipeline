@@ -1,0 +1,255 @@
+{
+  "description": "Canonical country entities and their aliases. Country resolution normalizes input values (lowercase, strip separators) and matches against these aliases, alpha-2 and alpha-3 codes. Add or edit entries here instead of hardcoding mappings in code.",
+  "canonical": {
+    "UNITED STATES": {
+      "iso_alpha2": "US",
+      "iso_alpha3": "USA",
+      "aliases": ["USA", "U.S.A.", "US", "America", "United States of America", "the united states of america", "estados unidos", "US of A"]
+    },
+    "GERMANY": {
+      "iso_alpha2": "DE",
+      "iso_alpha3": "DEU",
+      "aliases": ["Germany", "Deutschland", "Federal Republic of Germany", "DE", "GER"]
+    },
+    "INDIA": {
+      "iso_alpha2": "IN",
+      "iso_alpha3": "IND",
+      "aliases": ["India", "Republic of India", "Bharat", "IN"]
+    },
+    "BRAZIL": {
+      "iso_alpha2": "BR",
+      "iso_alpha3": "BRA",
+      "aliases": ["Brazil", "Brasil", "BR"]
+    },
+    "UNITED KINGDOM": {
+      "iso_alpha2": "GB",
+      "iso_alpha3": "GBR",
+      "aliases": ["UK", "U.K.", "United Kingdom", "Great Britain", "Britain", "England", "GB"]
+    },
+    "FRANCE": {
+      "iso_alpha2": "FR",
+      "iso_alpha3": "FRA",
+      "aliases": ["France", "France Republic", "FR"]
+    },
+    "CANADA": {
+      "iso_alpha2": "CA",
+      "iso_alpha3": "CAN",
+      "aliases": ["Canada", "CA"]
+    },
+    "JAPAN": {
+      "iso_alpha2": "JP",
+      "iso_alpha3": "JPN",
+      "aliases": ["Japan", "Nihon", "Nippon", "JP"]
+    },
+    "CHINA": {
+      "iso_alpha2": "CN",
+      "iso_alpha3": "CHN",
+      "aliases": ["China", "People's Republic of China", "PRC", "CN"]
+    },
+    "RUSSIA": {
+      "iso_alpha2": "RU",
+      "iso_alpha3": "RUS",
+      "aliases": ["Russia", "Russian Federation", "RU"]
+    },
+    "AUSTRALIA": {
+      "iso_alpha2": "AU",
+      "iso_alpha3": "AUS",
+      "aliases": ["Australia", "AU"]
+    },
+    "ITALY": {
+      "iso_alpha2": "IT",
+      "iso_alpha3": "ITA",
+      "aliases": ["Italy", "Italia", "IT"]
+    },
+    "SPAIN": {
+      "iso_alpha2": "ES",
+      "iso_alpha3": "ESP",
+      "aliases": ["Spain", "Espana", "ES"]
+    },
+    "MEXICO": {
+      "iso_alpha2": "MX",
+      "iso_alpha3": "MEX",
+      "aliases": ["Mexico", "MX"]
+    },
+    "NIGERIA": {
+      "iso_alpha2": "NG",
+      "iso_alpha3": "NGA",
+      "aliases": ["Nigeria", "NG"]
+    },
+    "SOUTH AFRICA": {
+      "iso_alpha2": "ZA",
+      "iso_alpha3": "ZAF",
+      "aliases": ["South Africa", "ZA"]
+    },
+    "EGYPT": {
+      "iso_alpha2": "EG",
+      "iso_alpha3": "EGY",
+      "aliases": ["Egypt", "Arab Republic of Egypt", "EG"]
+    },
+    "TURKEY": {
+      "iso_alpha2": "TR",
+      "iso_alpha3": "TUR",
+      "aliases": ["Turkey", "Turkiye", "TR"]
+    },
+    "SOUTH KOREA": {
+      "iso_alpha2": "KR",
+      "iso_alpha3": "KOR",
+      "aliases": ["South Korea", "Republic of Korea", "Korea", "KR"]
+    },
+    "INDONESIA": {
+      "iso_alpha2": "ID",
+      "iso_alpha3": "IDN",
+      "aliases": ["Indonesia", "ID"]
+    },
+    "PAKISTAN": {
+      "iso_alpha2": "PK",
+      "iso_alpha3": "PAK",
+      "aliases": ["Pakistan", "PK"]
+    },
+    "BANGLADESH": {
+      "iso_alpha2": "BD",
+      "iso_alpha3": "BGD",
+      "aliases": ["Bangladesh", "BD"]
+    },
+    "NETHERLANDS": {
+      "iso_alpha2": "NL",
+      "iso_alpha3": "NLD",
+      "aliases": ["Netherlands", "Holland", "The Netherlands", "NL"]
+    },
+    "SWITZERLAND": {
+      "iso_alpha2": "CH",
+      "iso_alpha3": "CHE",
+      "aliases": ["Switzerland", "Swiss", "CH"]
+    },
+    "SWEDEN": {
+      "iso_alpha2": "SE",
+      "iso_alpha3": "SWE",
+      "aliases": ["Sweden", "SE"]
+    },
+    "PORTUGAL": {
+      "iso_alpha2": "PT",
+      "iso_alpha3": "PRT",
+      "aliases": ["Portugal", "PT"]
+    },
+    "POLAND": {
+      "iso_alpha2": "PL",
+      "iso_alpha3": "POL",
+      "aliases": ["Poland", "PL"]
+    },
+    "GREECE": {
+      "iso_alpha2": "GR",
+      "iso_alpha3": "GRC",
+      "aliases": ["Greece", "GR"]
+    },
+    "ARGENTINA": {
+      "iso_alpha2": "AR",
+      "iso_alpha3": "ARG",
+      "aliases": ["Argentina", "AR"]
+    },
+    "CHILE": {
+      "iso_alpha2": "CL",
+      "iso_alpha3": "CHL",
+      "aliases": ["Chile", "CL"]
+    },
+    "SAUDI ARABIA": {
+      "iso_alpha2": "SA",
+      "iso_alpha3": "SAU",
+      "aliases": ["Saudi Arabia", "Kingdom of Saudi Arabia", "SA"]
+    },
+    "UNITED ARAB EMIRATES": {
+      "iso_alpha2": "AE",
+      "iso_alpha3": "ARE",
+      "aliases": ["United Arab Emirates", "UAE", "AE"]
+    },
+    "SINGAPORE": {
+      "iso_alpha2": "SG",
+      "iso_alpha3": "SGP",
+      "aliases": ["Singapore", "SG"]
+    },
+    "MALAYSIA": {
+      "iso_alpha2": "MY",
+      "iso_alpha3": "MYS",
+      "aliases": ["Malaysia", "MY"]
+    },
+    "THAILAND": {
+      "iso_alpha2": "TH",
+      "iso_alpha3": "THA",
+      "aliases": ["Thailand", "TH"]
+    },
+    "VIETNAM": {
+      "iso_alpha2": "VN",
+      "iso_alpha3": "VNM",
+      "aliases": ["Vietnam", "Viet Nam", "VN"]
+    },
+    "PHILIPPINES": {
+      "iso_alpha2": "PH",
+      "iso_alpha3": "PHL",
+      "aliases": ["Philippines", "PH"]
+    },
+    "NEW ZEALAND": {
+      "iso_alpha2": "NZ",
+      "iso_alpha3": "NZL",
+      "aliases": ["New Zealand", "NZ"]
+    },
+    "IRELAND": {
+      "iso_alpha2": "IE",
+      "iso_alpha3": "IRL",
+      "aliases": ["Ireland", "Republic of Ireland", "IE"]
+    },
+    "AUSTRIA": {
+      "iso_alpha2": "AT",
+      "iso_alpha3": "AUT",
+      "aliases": ["Austria", "AT"]
+    },
+    "BELGIUM": {
+      "iso_alpha2": "BE",
+      "iso_alpha3": "BEL",
+      "aliases": ["Belgium", "BE"]
+    },
+    "DENMARK": {
+      "iso_alpha2": "DK",
+      "iso_alpha3": "DNK",
+      "aliases": ["Denmark", "DK"]
+    },
+    "NORWAY": {
+      "iso_alpha2": "NO",
+      "iso_alpha3": "NOR",
+      "aliases": ["Norway", "NO"]
+    },
+    "FINLAND": {
+      "iso_alpha2": "FI",
+      "iso_alpha3": "FIN",
+      "aliases": ["Finland", "FI"]
+    },
+    "CZECHIA": {
+      "iso_alpha2": "CZ",
+      "iso_alpha3": "CZE",
+      "aliases": ["Czechia", "Czech Republic", "CZ"]
+    },
+    "UKRAINE": {
+      "iso_alpha2": "UA",
+      "iso_alpha3": "UKR",
+      "aliases": ["Ukraine", "UA"]
+    },
+    "ISRAEL": {
+      "iso_alpha2": "IL",
+      "iso_alpha3": "ISR",
+      "aliases": ["Israel", "IL"]
+    },
+    "KAZAKHSTAN": {
+      "iso_alpha2": "KZ",
+      "iso_alpha3": "KAZ",
+      "aliases": ["Kazakhstan", "KZ"]
+    },
+    "KENYA": {
+      "iso_alpha2": "KE",
+      "iso_alpha3": "KEN",
+      "aliases": ["Kenya", "KE"]
+    },
+    "GHANA": {
+      "iso_alpha2": "GH",
+      "iso_alpha3": "GHA",
+      "aliases": ["Ghana", "GH"]
+    }
+  }
+}

@@ -1,0 +1,5 @@
+country_name,iso_alpha2,iso_alpha3,gdp,population,year,life_expectancy
+UNITED STATES,US,USA,23.3,331.0,2023,77.2
+GERMANY,DE,DEU,4.2,83.0,2023,81.0
+INDIA,IN,IND,3.7,1400.0,2023,70.1
+BRAZIL,BR,BRA,,,2023,

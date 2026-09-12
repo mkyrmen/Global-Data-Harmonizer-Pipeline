@@ -1,43 +1,38 @@
-import sqlite3
+"""Legacy wrapper — render the static summary chart from the latest harmonized output."""
+
+import argparse
+import sys
+from pathlib import Path
+
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
-def create_dashboard():
-    db_path = "Z:/Project/Data_Harmonizer/processed_data/harmonized_data.db"
-    conn = sqlite3.connect(db_path)
-    df = pd.read_sql("SELECT * FROM socio_economic_stats", conn)
-    conn.close()
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-    # Drop rows where GDP is missing (like Brazil in our sample)
-    plot_df = df.dropna(subset=['gdp']).sort_values('gdp', ascending=False)
+from data_harmonizer.config import default_config
+from data_harmonizer.reporting.visualization import render_summary_plot
 
-    # Set Visual Style
-    sns.set_theme(style="whitegrid")
-    plt.figure(figsize=(12, 7))
 
-    # Create Bar Plot
-    ax = sns.barplot(data=plot_df, x='country', y='gdp', palette='magma')
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--csv", default=None, help="Path to harmonized CSV (defaults to latest output).")
+    args = parser.parse_args()
 
-    # Add Data Labels (Life Expectancy) on top of bars
-    for i, p in enumerate(ax.patches):
-        life_exp = plot_df.iloc[i]['life_expectancy']
-        label = f"Life Exp: {life_exp}y" if not pd.isna(life_exp) else "No Data"
-        ax.annotate(label, 
-                    (p.get_x() + p.get_width() / 2., p.get_height()), 
-                    ha = 'center', va = 'center', 
-                    xytext = (0, 9), 
-                    textcoords = 'offset points',
-                    fontweight='bold')
+    config = default_config()
+    if args.csv:
+        df = pd.read_csv(args.csv)
+    else:
+        paths = config.effective_paths()
+        runs = sorted(paths.processed_data_dir.glob("*/harmonized_data.csv"), key=lambda p: p.stat().st_mtime, reverse=True)
+        if not runs:
+            print("[ERROR] No harmonized output found. Run the pipeline first.", file=sys.stderr)
+            return 1
+        df = pd.read_csv(runs[0])
 
-    plt.title('Global Economic Snapshot: GDP & Life Expectancy', fontsize=16, pad=20)
-    plt.ylabel('GDP (Trillions USD)', fontsize=12)
-    plt.xlabel('Country', fontsize=12)
-    
-    plt.tight_layout()
-    plt.savefig("Z:/Project/Data_Harmonizer/processed_data/final_analytics_chart.png")
-    print("📈 New coherent chart saved to processed_data/final_analytics_chart.png")
-    plt.show()
+    out = config.effective_paths().processed("final_analytics_chart.png")
+    render_summary_plot(df, out)
+    print(f"Chart saved to {out}")
+    return 0
+
 
 if __name__ == "__main__":
-    create_dashboard()
+    sys.exit(main())
