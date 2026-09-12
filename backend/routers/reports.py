@@ -21,9 +21,9 @@ REPORT_ALIASES = {
 
 def _get_dataset(client, ctx: RequestContext, dataset_id: str) -> dict:
     row = client.table("harmonized_datasets").select("*").eq("id", dataset_id).eq("owner_id", ctx.user_id).maybe_single().execute()
-    if not row.data:
+    if not row:
         raise HTTPException(status_code=404, detail="Dataset not found")
-    return row.data[0]
+    return row.data
 
 
 @router.get("/{dataset_id}/csv")

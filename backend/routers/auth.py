@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from backend.dependencies import RequestContext, current_user, supabase_client_for
+from backend.dependencies import RequestContext, ServiceError, current_user, supabase_client_for
 from backend.services.demo_service import DemoService
 from supabase import AuthApiError
 
@@ -57,11 +57,16 @@ def login(body: Credentials):
 def me(ctx: RequestContext = Depends(current_user)):
     client = supabase_client_for(ctx)
     row = client.table("profiles").select("*").eq("id", ctx.user_id).maybe_single().execute()
-    if not row.data:
+    if not row:
         raise HTTPException(status_code=404, detail="Profile not found")
     return {**row.data, "id": ctx.user_id}
 
 
 @router.post("/demo")
 def demo_workspace(ctx: RequestContext = Depends(current_user)):
-    return DemoService(ctx).ensure_demo_workspace()
+    try:
+        return DemoService(ctx).ensure_demo_workspace()
+    except ServiceError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message) from exc
+    except Exception as exc:  # surface readable 500 with code
+        raise HTTPException(status_code=500, detail=f"Demo bootstrap failed: {exc}") from exc

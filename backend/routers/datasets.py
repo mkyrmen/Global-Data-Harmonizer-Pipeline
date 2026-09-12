@@ -33,19 +33,19 @@ def list_sources(ctx: RequestContext = Depends(current_user)):
 def get_source(source_id: str, ctx: RequestContext = Depends(current_user)):
     client = supabase_client_for(ctx)
     row = client.table("raw_sources").select("*").eq("id", source_id).eq("owner_id", ctx.user_id).maybe_single().execute()
-    if not row.data:
+    if not row:
         raise HTTPException(status_code=404, detail="Source not found")
-    return row.data[0]
+    return row.data
 
 
 @router.delete("/{source_id}")
 def delete_source(source_id: str, ctx: RequestContext = Depends(current_user)):
     client = supabase_client_for(ctx)
     row = client.table("raw_sources").select("*").eq("id", source_id).eq("owner_id", ctx.user_id).maybe_single().execute()
-    if not row.data:
+    if not row:
         raise HTTPException(status_code=404, detail="Source not found")
     from backend.services.storage_client import StorageClient
 
-    StorageClient(client, ctx.user_id).remove(row.data[0]["storage_path"])
+    StorageClient(client, ctx.user_id).remove(row.data["storage_path"])
     client.table("raw_sources").delete().eq("id", source_id).eq("owner_id", ctx.user_id).execute()
     return {"deleted": source_id}

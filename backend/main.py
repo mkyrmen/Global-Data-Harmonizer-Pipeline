@@ -37,6 +37,14 @@ def create_app() -> FastAPI:
     def health() -> dict[str, str]:
         return {"status": "ok", "version": VERSION, "supabase_configured": str(bool(settings.configured))}
 
+    @app.get("/health")
+    def health_root() -> dict[str, str]:
+        return {"status": "ok"}
+
+    @app.get("/")
+    def root() -> dict[str, str]:
+        return {"status": "ok", "service": "global-data-harmonizer-api", "docs": "/api/docs"}
+
     return app
 
 

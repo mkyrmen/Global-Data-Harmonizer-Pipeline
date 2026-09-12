@@ -76,7 +76,7 @@ def list_jobs(ctx: RequestContext = Depends(current_user)):
 def get_job(job_id: str, ctx: RequestContext = Depends(current_user)):
     client = supabase_client_for(ctx)
     job = client.table("harmonization_jobs").select("*").eq("id", job_id).eq("owner_id", ctx.user_id).maybe_single().execute()
-    if not job.data:
+    if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     dataset = client.table("harmonized_datasets").select("*").eq("job_id", job_id).eq("owner_id", ctx.user_id).maybe_single().execute()
-    return {**job.data[0], "dataset": dataset.data[0] if dataset.data else None}
+    return {**job.data, "dataset": dataset.data if dataset else None}

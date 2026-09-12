@@ -12,14 +12,22 @@ export class ApiError extends Error {
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = getToken();
-  const res = await fetch(`${API_URL}${path}`, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...init.headers,
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      ...init,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...init.headers,
+      },
+    });
+  } catch {
+    throw new ApiError(
+      `Unable to connect to the backend API at ${API_URL}. Please verify the backend deployment.`,
+      0
+    );
+  }
   if (!res.ok) {
     let detail = res.statusText;
     try {
@@ -47,19 +55,27 @@ export const api = {
       method: "POST",
       body: form,
       headers: token ? { Authorization: `Bearer ${token}` } : {},
-    }).then(async (res) => {
-      if (!res.ok) {
-        let detail = res.statusText;
-        try {
-          const body = await res.json();
-          detail = body.detail ?? detail;
-        } catch {
-          /* keep */
+    }).then(
+      async (res) => {
+        if (!res.ok) {
+          let detail = res.statusText;
+          try {
+            const body = await res.json();
+            detail = body.detail ?? detail;
+          } catch {
+            /* keep */
+          }
+          throw new ApiError(detail, res.status);
         }
-        throw new ApiError(detail, res.status);
+        return (await res.json()) as T;
+      },
+      () => {
+        throw new ApiError(
+          `Unable to connect to the backend API at ${API_URL}. Please verify the backend deployment.`,
+          0
+        );
       }
-      return (await res.json()) as T;
-    });
+    );
   },
 };
 

@@ -37,16 +37,16 @@ def create_workspace(body: CreateWorkspaceBody, ctx: RequestContext = Depends(cu
 def get_workspace(workspace_id: str, ctx: RequestContext = Depends(current_user)):
     client = supabase_client_for(ctx)
     row = client.table("workspaces").select("*").eq("id", workspace_id).eq("owner_id", ctx.user_id).maybe_single().execute()
-    if not row.data:
+    if not row:
         raise HTTPException(status_code=404, detail="Workspace not found")
-    return _with_sources(client, row.data[0])
+    return _with_sources(client, row.data)
 
 
 @router.patch("/{workspace_id}/sources")
 def toggle_sources(workspace_id: str, body: ToggleSourcesBody, ctx: RequestContext = Depends(current_user)):
     client = supabase_client_for(ctx)
     owned = client.table("workspaces").select("id").eq("id", workspace_id).eq("owner_id", ctx.user_id).maybe_single().execute()
-    if not owned.data:
+    if not owned:
         raise HTTPException(status_code=404, detail="Workspace not found")
 
     for entry in body.sources:
