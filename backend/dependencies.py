@@ -9,7 +9,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt import ExpiredSignatureError, InvalidTokenError, decode
 
 from backend.config import Settings, settings
-from supabase import Client, create_client
+from supabase import Client, ClientOptions, create_client
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -57,7 +57,7 @@ def supabase_client_for(ctx: RequestContext) -> Client:
     return create_client(
         settings.supabase_url,
         settings.supabase_anon_key,
-        options={"global": {"headers": {"Authorization": f"Bearer {ctx.token}"}}},
+        options=ClientOptions(headers={"Authorization": f"Bearer {ctx.token}"}),
     )
 
 
