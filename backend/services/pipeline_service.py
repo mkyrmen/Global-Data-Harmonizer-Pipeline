@@ -107,7 +107,7 @@ class PipelineService:
 
             report_files = self._persist_outputs(job_id, final_df, result)
             row = self._persist_dataset(job_id, workspace_id, final_df, result, report_files)
-            summary = self._job_summary(result, final_df, report_files, str(row.id), job_id)
+            summary = self._job_summary(result, final_df, report_files, str(row["id"]), job_id)
             self._update_job(job_id, status="succeeded", completed_at=now_iso())
             return summary
         except Exception as exc:
