@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import base64
+from datetime import UTC, datetime
+
 import jwt
 import pytest
+from cryptography.hazmat.primitives.asymmetric import ec
 
 from backend.config import Settings
 from backend.dependencies import _decode_user_id
@@ -51,6 +55,69 @@ class TestJwtSecurity:
         with pytest.raises(HTTPException) as exc:
             _decode_user_id("anything", cfg)
         assert exc.value.status_code == 500
+
+
+def _p256_keypair():
+    private = ec.generate_private_key(ec.SECP256R1())
+    numbers = private.public_key().public_numbers()
+    b64u = lambda i: base64.urlsafe_b64encode(i.to_bytes(32, "big")).rstrip(b"=").decode()
+    jwk = {
+        "kty": "EC",
+        "crv": "P-256",
+        "kid": "test-kid-1",
+        "x": b64u(numbers.x),
+        "y": b64u(numbers.y),
+    }
+    return private, jwk
+
+
+class TestJwtEs256:
+    def _settings(self) -> Settings:
+        return Settings(
+            supabase_url="https://example.supabase.co", supabase_anon_key="anon", supabase_jwt_secret=SECRET
+        )
+
+    def _es256_token(self, private_key, sub: str = "user-es256", kid: str = "test-kid-1") -> str:
+        now = int(datetime.now(UTC).timestamp())
+        return jwt.encode(
+            {"sub": sub, "aud": "authenticated", "role": "authenticated", "iat": now, "exp": now + 3600},
+            private_key,
+            algorithm="ES256",
+            headers={"kid": kid},
+        )
+
+    def test_es256_token_verified_via_jwks(self, monkeypatch):
+        private, jwk = _p256_keypair()
+        import backend.dependencies as deps
+
+        monkeypatch.setattr(deps, "_jwks_keys", lambda cfg, force=False: [jwk])
+        token = self._es256_token(private)
+        assert _decode_user_id(token, self._settings()) == "user-es256"
+
+    def test_es256_wrong_key_rejected(self, monkeypatch):
+        _, jwk = _p256_keypair()
+        private_bad, _ = _p256_keypair()
+        import backend.dependencies as deps
+
+        monkeypatch.setattr(deps, "_jwks_keys", lambda cfg, force=False: [jwk])
+        token = self._es256_token(private_bad)
+        from fastapi import HTTPException
+
+        with pytest.raises(HTTPException) as exc:
+            _decode_user_id(token, self._settings())
+        assert exc.value.status_code == 401
+
+    def test_es256_candidate_refresh_on_miss(self, monkeypatch):
+        private, jwk = _p256_keypair()
+        import backend.dependencies as deps
+
+        # First fetch (kid mismatch) returns empty JWKS; refresh supplies the key.
+        def first_fetch(cfg, force=False):
+            return [jwk] if force else [{"kty": "EC", "crv": "P-256", "kid": "old-kid", "x": jwk["x"], "y": jwk["y"]}]
+
+        monkeypatch.setattr(deps, "_jwks_keys", first_fetch)
+        token = self._es256_token(private, kid="test-kid-1")
+        assert _decode_user_id(token, self._settings()) == "user-es256"
 
 
 class TestConfigMapping:
