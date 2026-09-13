@@ -5,7 +5,6 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -35,13 +34,20 @@ export default function QualityChart({ before, after }: Props) {
     <div className="flex flex-col gap-6">
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-            <XAxis dataKey="name" stroke="#94a3b8" />
-            <YAxis domain={[0, 100]} stroke="#94a3b8" />
-            <Tooltip cursor={{ fill: "rgba(148,163,184,0.08)" }} />
-            <Legend />
-            <Bar dataKey="score" name="Quality score">
+          <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 8 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+            <XAxis dataKey="name" stroke="#94a3b8" tickLine={false} axisLine={false} />
+            <YAxis domain={[0, 100]} stroke="#94a3b8" tickLine={false} axisLine={false} />
+            <Tooltip
+              cursor={{ fill: "rgba(148,163,184,0.08)" }}
+              contentStyle={{
+                background: "#0f172a",
+                border: "1px solid #1e293b",
+                borderRadius: "0.5rem",
+                fontSize: "0.8rem",
+              }}
+            />
+            <Bar dataKey="score" name="Quality score" maxBarSize={72} radius={[6, 6, 0, 0]}>
               {data.map((entry) => (
                 <Cell key={entry.name} fill={entry.fill} />
               ))}
@@ -54,12 +60,20 @@ export default function QualityChart({ before, after }: Props) {
         <div className="h-48">
           <h4 className="text-sm font-medium text-slate-300 mb-2">Score deductions (after)</h4>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={deductions} layout="vertical" margin={{ left: 32 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis type="number" stroke="#94a3b8" />
+            <BarChart data={deductions} layout="vertical" margin={{ left: 4, right: 8 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+              <XAxis type="number" stroke="#94a3b8" tickLine={false} axisLine={false} />
               <YAxis type="category" dataKey="name" width={140} stroke="#94a3b8" tick={{ fontSize: 12 }} />
-              <Tooltip cursor={{ fill: "rgba(148,163,184,0.08)" }} />
-              <Bar dataKey="points" name="Points deducted" fill="#f87171" />
+              <Tooltip
+                cursor={{ fill: "rgba(148,163,184,0.08)" }}
+                contentStyle={{
+                  background: "#0f172a",
+                  border: "1px solid #1e293b",
+                  borderRadius: "0.5rem",
+                  fontSize: "0.8rem",
+                }}
+              />
+              <Bar dataKey="points" name="Points deducted" fill="#f87171" maxBarSize={16} radius={[0, 6, 6, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

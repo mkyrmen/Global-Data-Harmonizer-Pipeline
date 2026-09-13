@@ -98,33 +98,53 @@ export default function WorkspacePage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <header className="flex items-center justify-between px-8 py-4 border-b border-slate-800">
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="text-slate-400 hover:text-white text-sm">
-            ← Workspaces
-          </Link>
-          <h1 className="text-xl font-bold">{workspace?.name ?? "Loading…"}</h1>
+      <div className="bg-glow pointer-events-none fixed inset-0" aria-hidden />
+
+      <header className="sticky top-0 z-20 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <Link
+              href="/dashboard"
+              className="shrink-0 rounded-md px-2 py-1 text-sm text-slate-400 transition-all duration-150 hover:bg-slate-900 hover:text-white active:scale-[0.97]"
+            >
+              ← Workspaces
+            </Link>
+            <h1 className="truncate text-xl font-bold tracking-tight">
+              {workspace?.name ?? "Loading…"}
+            </h1>
+          </div>
+          <form onSubmit={runPipeline} className="flex shrink-0 items-center gap-2">
+            <button
+              type="submit"
+              disabled={running || selected.length === 0}
+              className="rounded-lg bg-cyan-500 px-5 py-2 text-sm font-semibold text-slate-950 transition-all duration-150 hover:bg-cyan-400 active:scale-[0.97] disabled:opacity-50"
+            >
+              {running ? (
+                <span className="flex items-center gap-2">
+                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-slate-950/30 border-t-slate-950" />
+                  Running…
+                </span>
+              ) : (
+                "Run pipeline"
+              )}
+            </button>
+          </form>
         </div>
-        <form onSubmit={runPipeline} className="flex items-center gap-2">
-          <button
-            type="submit"
-            disabled={running || selected.length === 0}
-            className="rounded-md bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold px-5 py-2 text-sm disabled:opacity-50"
-          >
-            {running ? "Running pipeline…" : "Run pipeline"}
-          </button>
-        </form>
       </header>
 
-      {error && <p className="mx-8 mt-4 text-sm text-red-400">{error}</p>}
+      {error && (
+        <p className="mx-auto mt-4 max-w-6xl rounded-lg border border-red-800 bg-red-950/40 px-8 py-2.5 text-sm text-red-300">
+          {error}
+        </p>
+      )}
 
-      <div className="max-w-6xl mx-auto px-8 py-8 flex flex-col gap-10">
+      <div className="fade-in mx-auto max-w-6xl px-8 py-8">
         <section className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Sources — review and toggle</h2>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-lg font-semibold tracking-tight">Sources — review and toggle</h2>
             <button
               onClick={() => fileInput.current?.click()}
-              className="rounded-md border border-slate-700 hover:border-cyan-500 px-4 py-2 text-sm"
+              className="rounded-md border border-slate-700 px-4 py-2 text-sm text-slate-200 transition-all duration-150 hover:border-cyan-500 hover:text-cyan-300 active:scale-[0.97]"
             >
               Upload dataset
             </button>
@@ -132,38 +152,48 @@ export default function WorkspacePage() {
           </div>
 
           {sources.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-slate-700 p-10 text-center text-slate-500">
+            <div className="rounded-xl border border-dashed border-slate-700 p-10 text-center text-slate-500">
               No sources yet. Upload a CSV to get started.
             </div>
           ) : (
             <ul className="flex flex-col gap-3">
               {sources.map((src) => (
-                <li key={src.id} className="rounded-lg border border-slate-800 bg-slate-900">
+                <li
+                  key={src.id}
+                  className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900 transition-colors duration-150 hover:border-slate-700"
+                >
                   <div className="flex items-center gap-3 px-4 py-3">
                     <input
                       type="checkbox"
                       checked={selected.includes(src.id)}
                       onChange={() => onToggle(src.id)}
-                      className="w-4 h-4 accent-cyan-500"
+                      className="h-4 w-4 shrink-0 accent-cyan-500"
                     />
-                    <div className="flex-1">
-                      <h3 className="font-medium">{src.name}</h3>
-                      <p className="text-xs text-slate-400">
-                        {src.row_count} rows · {src.column_names.join(", ") || "no columns"}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate font-medium">{src.name}</h3>
+                      <p className="mt-0.5 truncate text-xs text-slate-400">
+                        <span className="tabular-nums">{src.row_count} rows</span> ·{" "}
+                        {src.column_names.join(", ") || "no columns"}
                       </p>
                     </div>
                   </div>
                   {src.preview_json.length > 0 && (
-                    <div className="px-4 pb-3 overflow-x-auto">
-                      <table className="text-xs text-slate-300 border border-slate-800">
+                    <div className="max-h-48 overflow-auto border-t border-slate-800/70 px-4 pb-3 pt-2">
+                      <table className="w-full text-xs text-slate-300">
                         <thead>
-                          <tr>{src.column_names.map((c) => <th key={c} className="px-2 py-1 bg-slate-800">{c}</th>)}</tr>
+                          <tr>
+                            {src.column_names.map((c) => (
+                              <th key={c} className="bg-slate-800 px-2 py-1 text-left font-medium uppercase tracking-wide">
+                                {c}
+                              </th>
+                            ))}
+                          </tr>
                         </thead>
                         <tbody>
                           {src.preview_json.slice(0, 5).map((row, i) => (
-                            <tr key={i}>
+                            <tr key={i} className="transition-colors hover:bg-cyan-500/[0.04]">
                               {src.column_names.map((c) => (
-                                <td key={c} className="px-2 py-1 border-t border-slate-800">
+                                <td key={c} className="border-t border-slate-800 px-2 py-1 tabular-nums">
                                   {String((row as Record<string, unknown>)[c] ?? "")}
                                 </td>
                               ))}
@@ -180,29 +210,36 @@ export default function WorkspacePage() {
         </section>
 
         {(result || dataset) && (
-          <section className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">Harmonized result</h2>
+          <section className="fade-in mt-10 flex flex-col gap-4">
+            <h2 className="text-lg font-semibold tracking-tight">Harmonized result</h2>
             {result && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <Metric label="Rows" value={`${result.input_rows} → ${result.output_rows}`} />
                 <Metric label="Duplicates removed" value={String(result.duplicates_removed)} />
-                <Metric label="Quality" value={`${result.quality_before?.score.toFixed(1) ?? "–"} → ${result.quality_after?.score.toFixed(1) ?? "–"}`} />
+                <Metric
+                  label="Quality"
+                  value={`${result.quality_before?.score.toFixed(1) ?? "–"} → ${result.quality_after?.score.toFixed(1) ?? "–"}`}
+                />
                 <Metric
                   label="Validation"
-                  value={result.validation ? `${result.validation.failed === 0 ? "PASS" : "FAIL"} (${result.validation.passed}/${result.validation.passed + result.validation.failed})` : "–"}
+                  value={
+                    result.validation
+                      ? `${result.validation.failed === 0 ? "PASS" : "FAIL"} (${result.validation.passed}/${result.validation.passed + result.validation.failed})`
+                      : "–"
+                  }
                 />
               </div>
             )}
 
             {result && (
-              <div className="rounded-lg border border-slate-800 bg-slate-900 p-5">
+              <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
                 <QualityChart before={result.quality_before} after={result.quality_after} />
               </div>
             )}
 
             {dataset && (
               <div className="flex flex-col gap-6">
-                <div className="flex gap-3 flex-wrap">
+                <div className="flex flex-wrap gap-2">
                   <DownloadLink href={downloadUrl(`/api/reports/${dataset.id}/csv`)} label="Download harmonized CSV" />
                   <DownloadLink href={downloadUrl(`/api/reports/${dataset.id}/report?name=quality`)} label="Quality report (JSON)" />
                   <DownloadLink href={downloadUrl(`/api/reports/${dataset.id}/report?name=lineage`)} label="Transformation log (JSON)" />
@@ -215,9 +252,11 @@ export default function WorkspacePage() {
             )}
 
             {result?.conflicts && result.conflicts.length > 0 && (
-              <div className="rounded-lg border border-amber-700/50 bg-amber-950/30 p-4">
-                <h3 className="font-semibold text-amber-300 text-sm mb-2">Cross-source conflicts detected</h3>
-                <ul className="text-sm text-amber-200 space-y-1">
+              <div className="rounded-xl border border-amber-700/50 bg-amber-950/30 p-4">
+                <h3 className="mb-2 text-sm font-semibold text-amber-300">
+                  Cross-source conflicts detected
+                </h3>
+                <ul className="space-y-1 text-sm text-amber-200">
                   {result.conflicts.map((c, i) => (
                     <li key={i}>
                       {c.key_value} · {c.field}: {String(c.values)} → selected {String(c.selected_value)}
@@ -235,9 +274,9 @@ export default function WorkspacePage() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-900 px-4 py-3">
-      <p className="text-xs text-slate-400 uppercase tracking-wide">{label}</p>
-      <p className="mt-1 font-semibold tabular-nums">{value}</p>
+    <div className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-3 shadow-[0_0_0_1px_rgba(148,163,184,0.05)]">
+      <p className="text-xs uppercase tracking-widest text-slate-400">{label}</p>
+      <p className="mt-1.5 text-lg font-semibold tabular-nums tracking-tight">{value}</p>
     </div>
   );
 }
@@ -258,7 +297,7 @@ function DownloadLink({ href, label }: { href: string; label: string }) {
           });
         });
       }}
-      className="rounded-md border border-slate-700 hover:border-cyan-500 px-4 py-2 text-sm"
+      className="rounded-md border border-slate-700 px-4 py-2 text-sm text-slate-200 transition-all duration-150 hover:border-cyan-500 hover:text-cyan-300 active:scale-[0.97]"
     >
       {label}
     </a>

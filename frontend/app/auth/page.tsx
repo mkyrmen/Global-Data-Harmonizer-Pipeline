@@ -45,20 +45,29 @@ export default function AuthPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-950 text-white px-6">
-      <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center mb-2">Global Data Harmonizer</h1>
-        <p className="text-center text-slate-400 text-sm mb-8">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b from-slate-950 to-slate-900 px-6 text-white">
+      <div className="bg-glow pointer-events-none absolute inset-0" aria-hidden />
+
+      <div className="fade-in relative w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-900/70 p-8 shadow-2xl shadow-slate-950/50 backdrop-blur-md">
+        <h1 className="mb-1 text-center text-2xl font-bold tracking-tight">
+          Global Data Harmonizer
+        </h1>
+        <p className="mb-8 text-center text-sm text-slate-400">
           {mode === "login" ? "Sign in to your workspace" : "Create an account"}
         </p>
 
-        <div className="flex rounded-lg bg-slate-900 p-1 mb-6">
+        <div className="mb-6 flex rounded-lg bg-slate-950/60 p-1">
           {(["login", "register"] as Mode[]).map((m) => (
             <button
               key={m}
-              onClick={() => setMode(m)}
-              className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${
-                mode === m ? "bg-cyan-500 text-slate-950" : "text-slate-400 hover:text-white"
+              onClick={() => {
+                setMode(m);
+                setError(null);
+              }}
+              className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-all duration-150 ${
+                mode === m
+                  ? "bg-cyan-500 text-slate-950 shadow-sm shadow-cyan-500/30"
+                  : "text-slate-400 hover:text-white"
               }`}
             >
               {m === "login" ? "Sign in" : "Register"}
@@ -73,7 +82,7 @@ export default function AuthPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
-            className="rounded-md bg-slate-900 border border-slate-700 px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500"
+            className="rounded-lg border border-slate-700 bg-slate-950/60 px-4 py-2.5 text-sm placeholder-slate-500 transition-colors duration-150 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/25"
           />
           <input
             type="password"
@@ -82,15 +91,19 @@ export default function AuthPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password (min 6 characters)"
-            className="rounded-md bg-slate-900 border border-slate-700 px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500"
+            className="rounded-lg border border-slate-700 bg-slate-950/60 px-4 py-2.5 text-sm placeholder-slate-500 transition-colors duration-150 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/25"
           />
           {error && <p className="text-sm text-red-400">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="rounded-md bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold py-2.5 disabled:opacity-50 transition-colors"
+            className="rounded-lg bg-cyan-500 py-2.5 font-semibold text-slate-950 transition-all duration-150 hover:bg-cyan-400 active:scale-[0.98] disabled:opacity-50"
           >
-            {loading ? "Working…" : mode === "login" ? "Sign in" : "Register"}
+            {loading
+              ? "Working…"
+              : mode === "login"
+                ? "Sign in"
+                : "Register"}
           </button>
         </form>
       </div>
