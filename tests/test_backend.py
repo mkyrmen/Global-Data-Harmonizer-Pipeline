@@ -11,7 +11,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 
 from backend.config import Settings
 from backend.dependencies import _decode_user_id
-from backend.services.pipeline_service import PipelineService
+from backend.services.pipeline_service import PipelineService, _json_safe
 
 SECRET = "super-secret-jwt-key-for-testing-only-0123456789abcdef"
 
@@ -118,6 +118,40 @@ class TestJwtEs256:
         monkeypatch.setattr(deps, "_jwks_keys", first_fetch)
         token = self._es256_token(private, kid="test-kid-1")
         assert _decode_user_id(token, self._settings()) == "user-es256"
+
+
+class TestJsonSafe:
+    def test_nan_inf_pd_na_to_none(self):
+        import math
+
+        import pandas as pd
+
+        out = _json_safe(
+            {
+                "a": float("nan"),
+                "b": float("inf"),
+                "c": pd.NA,
+                "d": 3,
+                "e": "x",
+                "f": [1.0, float("nan")],
+                "g": {"n": float("nan")},
+            }
+        )
+        assert out["a"] is None
+        assert out["b"] is None
+        assert out["c"] is None
+        assert out["d"] == 3
+        assert out["f"][1] is None
+        assert out["g"]["n"] is None
+        assert math.isnan(out["f"][0]) is False
+
+    def test_numpy_scalars_coerced(self):
+        import numpy as np
+
+        out = _json_safe({"v": np.float64(1.5), "i": np.int64(2)})
+        assert out == {"v": 1.5, "i": 2}
+        assert isinstance(out["v"], float)
+        assert isinstance(out["i"], int)
 
 
 class TestConfigMapping:

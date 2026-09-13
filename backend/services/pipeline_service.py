@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import math
 import tempfile
 from datetime import UTC
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from backend.dependencies import RequestContext, ServiceError, supabase_client_for
@@ -21,6 +23,21 @@ JOB_FIELDS = {
     "id", "owner_id", "workspace_id", "name", "config_json", "status",
     "error_message", "created_at", "started_at", "completed_at",
 }
+
+
+def _json_safe(value: Any) -> Any:
+    """Recursively convert numpy/pandas scalars and NaN/inf to JSON-safe values."""
+    if isinstance(value, dict):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    if value is pd.NA or value is None:
+        return None
+    if isinstance(value, np.generic):
+        value = value.item()
+    if isinstance(value, float) and (math.isnan(value) or math.isinf(value)):
+        return None
+    return value
 
 
 class PipelineService:
@@ -166,7 +183,7 @@ class PipelineService:
         result: HarmonizationResult,
         report_files: dict[str, str],
     ) -> Any:
-        rows = final_df.where(pd.notna(final_df), None).to_dict(orient="records")
+        rows = _json_safe(final_df.to_dict(orient="records"))
         payload = {
             "job_id": job_id,
             "owner_id": self.ctx.user_id,
