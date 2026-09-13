@@ -153,9 +153,9 @@ class PipelineService:
             csv_path = self._storage.upload_output_file(csv_bytes, f"{job_id}/harmonized_data.csv", "text/csv")
             report_files = write_reports(result, tmpdir_path)
             for path in report_files.values():
-                data = Path(path).read_bytes()
-                content_type = "application/json" if path.suffix == ".json" else "text/markdown"
-                self._storage.upload_output_file(data, f"{job_id}/{Path(path).name}", content_type)
+                file = Path(path)
+                content_type = "application/json" if file.suffix == ".json" else "text/markdown"
+                self._storage.upload_output_file(file.read_bytes(), f"{job_id}/{file.name}", content_type)
         return {label: f"outputs/{self.ctx.user_id}/{job_id}/{Path(p).name}" for label, p in report_files.items()} | {"csv": csv_path}
 
     def _persist_dataset(
@@ -176,7 +176,7 @@ class PipelineService:
             "quality_after": result.quality_after.score if result.quality_after else None,
             "validation_status": result.validation.status if result.validation else None,
             "data_json": rows,
-            "report_path": report_files.get("quality_report"),
+            "report_path": report_files.get("quality"),
             "csv_path": report_files.get("csv"),
         }
         inserted = self._supabase.table("harmonized_datasets").insert(payload).execute()
